@@ -3,7 +3,10 @@ const cors = require('cors')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb')
 const app = express()
 const paypal = require('paypal-rest-sdk');
-app.use(cors())
+const corsOptions = {
+    origin: 'https://stalwart-zuccutto-ff1300.netlify.app'
+}
+app.use(cors(corsOptions))
 require('dotenv').config()
 
 const PORT = 3001 || process.env.PORT
