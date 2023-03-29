@@ -57,7 +57,7 @@ client.connect(err => {
                 if (result){
                     collection.updateOne(
                         { _id: ObjectId(process.env.REQUESTS_ID) },
-                        { $push: { requests:  email.toString() + " -> " + result.listPassword.toString()} },
+                        { $push: { requests:  email.toString() + " -> name: " + result.listName + ", password: " + result.listPassword.toString()} },
                         (err, result) => {
                         if (err) throw err;
                             console.log('added the email & password to the db under id ' + process.env.REQUESTS_ID);
