@@ -29,6 +29,20 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
         
 const collection = client.db("shopping-list").collection("lists")
 
+app.post('/changenotificated', (req, res) => {
+    const listId = req.query.listId
+
+    collection.updateOne({_id: new ObjectId(listId)}, { $set: { notificated: true } }, (err, result) => {
+        if (err) {
+            res.send('Could not updated notificated field.')
+            console.log('Could not updated notificated field.')
+        }else{
+            console.log('Successfuly updated notificated field to true for ' + listId.toString())
+            res.send('Successfuly updated notificated field to true for ' + listId.toString())
+        }
+    })
+})
+
 app.post('/addlist', (req, res) => {
     const listName = req.query.listName
     const listPassword = req.query.listPassword
@@ -40,6 +54,7 @@ app.post('/addlist', (req, res) => {
         listPassword: listPassword,
         listEmail: listEmail,
         listPhone: listPhone,
+        notificated: false,
         food: Array()
     }).then(result => {
         console.log(result)
@@ -123,7 +138,6 @@ app.post('/addfood', (req, res) => {
     const foodName = req.query.foodName
     const foodAmount = req.query.foodAmount
     const foodSection = req.query.foodSection
-// console.log(foodSection)
 
     collection.updateOne({_id: ObjectId(_id)}, {
         $push:{
@@ -139,11 +153,60 @@ app.post('/addfood', (req, res) => {
         }
     }).then(result => {
         console.log(`added ${foodName} => ${foodAmount} for id: ${_id}`)
+        
+        console.log(result.value)
         res.send("successfuly added !");
     }).catch(err => {
         console.log("Could not add !")
         res.send("Could not add !")
     })
+  
+    // collection.updateOne(
+    //     {_id: ObjectId(_id)},
+    //     {
+    //         $push: {
+    //             food: {
+    //                 $each: [{
+    //                     name: foodName,
+    //                     amount: foodAmount,
+    //                     section: foodSection,
+    //                     foodId: new ObjectId()
+    //                 }],
+    //                 $position: 0
+    //             }
+    //         }
+    //     }
+    // ).then(result => {
+    //     console.log(`added ${foodName} => ${foodAmount} for id: ${_id}`);
+    //     if (result.modifiedCount === 1) {
+    //         collection.findOne({
+    //             _id: ObjectId(_id),
+    //             'food.name': foodName,
+    //             'food.amount': foodAmount,
+    //             'food.section': foodSection
+    //         }, (err, doc) => {
+    //             if (err || !doc) {
+    //                 console.log("Could not find newly added food object in the database");
+    //                 res.send("Could not find newly added food object in the database");
+    //             } else {
+    //                 const newFoodId = doc.food.find(f => f.name === foodName && f.amount === foodAmount && f.section === foodSection).foodId;
+    //                 console.log(`Newly added food object ID: ${newFoodId}`);
+    //                 res.send(newFoodId);
+    //             }
+    //         });
+    //     } else {
+    //         console.log("Could not add food object to the database");
+    //         res.send("Could not add food object to the database");
+    //     }
+    // }).catch(err => {
+    //     console.log("Could not add !");
+    //     res.send("Could not add !");
+    // });
+    
+      
+      
+      
+      
 })
 
 app.post('/removefood', (req, res) => {
@@ -190,10 +253,10 @@ app.post('/changefoodamount', (req, res) => {
 
     .then(result => {
         console.log(result)
-        res.send("item deleted !")
+        res.send("Amount changed successfuly")
     }).catch(err => {
         console.error(err);
-        res.send("Could not remove item !")
+        res.send("Could not change the amount of the item !")
     })
 })//}
 // })
