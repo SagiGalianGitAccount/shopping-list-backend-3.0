@@ -43,6 +43,16 @@ app.post('/changenotificated', (req, res) => {
     })
 })
 
+app.post('/checkPremium', (req, res) => {
+    const listId = req.query.listId
+
+    collection.findOne({_id: new ObjectId(listId)}).then(result => {
+        res.send(result.premium)
+    }).catch(err => {
+        console.log("Error occured")
+    })
+})
+
 app.post('/addlist', (req, res) => {
     const listName = req.query.listName
     const listPassword = req.query.listPassword
@@ -55,6 +65,8 @@ app.post('/addlist', (req, res) => {
         listEmail: listEmail,
         listPhone: listPhone,
         notificated: false,
+        date: new Date(),
+        premium: false,
         food: Array()
     }).then(result => {
         console.log(result)
@@ -64,7 +76,16 @@ app.post('/addlist', (req, res) => {
         res.send("Could not add !") // 1981
     })
 })
+app.post('/updateLastPayment', (req, res) => {
+    const listId = req.query.listId
 
+    collection.updateOne({_id: new ObjectId(listId)}, {
+        $set: { date: new Date() }
+    }).then(result => {
+        console.log(result)
+        res.send("New date assigned")
+    })
+})
 app.post("/sendPasswordToEmail", (req, res) => {
     const email = req.query.toMail
     const password = null;
