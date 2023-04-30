@@ -49,7 +49,7 @@ app.post('/checkPremium', (req, res) => {
     collection.findOne({_id: new ObjectId(listId)}).then(result => {
         res.send(result.premium)
     }).catch(err => {
-        console.log("Error occured")
+        console.log("Error occured", err)
     })
 })
 
